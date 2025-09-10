@@ -1,1 +1,1 @@
-[![Ícone de PDF](https://img.shields.io/badge/PDF-Baixar%20Arquivo-red)](https://raw.githubusercontent.com/Luiz-06/design-de-api/galera-do-volei.pdf)
+<iframe src="https://docs.google.com/gview?url=https://raw.githubusercontent.com/Luiz-06/design-de-api/main/galera-do-voiei.pdf&embedded=true" style="width:100%; height:500px;" frameborder="0"></iframe>
