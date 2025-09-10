@@ -3,17 +3,14 @@ from pydantic import BaseModel
 from enum import Enum
 from datetime import date, time
 
-# Cria uma instância da nossa API. 
 app = FastAPI()
 
-# Define as categorias que nos vamos usar.
 class Categoria(str, Enum):
     iniciante = "iniciante"
     amador = "amador"
     profissional = "profissional"
 
-# Esse é o modelo de dados de uma partida.
-# Ele diz quais informações uma partida deve ter (ID, nome, data, etc.).
+
 class Partida(BaseModel):
     id_partida: int
     id_adm: int
@@ -24,8 +21,7 @@ class Partida(BaseModel):
     categoria_partida: Categoria
     id_participantes: list[int] = []
 
-# Esse é o modelo de dados de um jogador.
-# Ele define as informações de cada pessoa que joga.
+
 class Jogador(BaseModel):
     id_jogador: int
     nome_jogador: str
@@ -33,7 +29,7 @@ class Jogador(BaseModel):
     fone_jogador: int
     avaliacao_jogador: int
 
-# Nosso "banco de dados" de jogadores, que é só uma lista de objetos.
+
 jogadores_db = [
     Jogador(
         id_jogador=1,
@@ -86,7 +82,7 @@ jogadores_db = [
     ),
 ]
 
-# Nosso "banco de dados" de partidas, também uma lista de objetos.
+
 partidas_db = [
     Partida(
         id_partida=1,
@@ -140,15 +136,12 @@ partidas_db = [
     ),
 ]
 
-# Rota de boas-vindas. Simples assim.
-# Não precisa de nenhum parâmetro.
+
 @app.get("/")
 def helloWorld():
     return "Vôlei do Rogério !!!"
 
 
-# Essa rota é para um jogador se inscrever em uma partida.
-# Ela precisa de dois **querry parameters** na URL: `id_partida` e `id_jogador`.
 @app.post("/partidas/inscrever")
 def inscreverPartida(id_partida: int, id_jogador: int):
     partida_encontrada = None
@@ -180,8 +173,6 @@ def inscreverPartida(id_partida: int, id_jogador: int):
     return {"mensagem": f"Jogador {id_jogador} inscrito com sucesso na partida {id_partida}."}
 
 
-# Essa rota cria uma nova partida.
-# Ela espera os dados da partida (um JSON) no **body parameter**.
 @app.post("/partidas")
 def criarPartida(nova_partida: Partida): 
     for partida_existente in partidas_db:
@@ -191,15 +182,11 @@ def criarPartida(nova_partida: Partida):
     return {"mensagem": "Partida criada com sucesso!", "partida_criada": nova_partida}
 
 
-# Rota para pegar a lista completa de todas as partidas.
-# Não precisa de nenhum parâmetro.
 @app.get("/partidas")
 def listarPartidas():
     return partidas_db
 
 
-# Rota para buscar uma partida específica usando o ID.
-# O `id_partida` é um **path parameter** que vai na própria URL.
 @app.get("/partidas/id/{id_partida}")
 def partidaId(id_partida: int):
     for partida in partidas_db:
@@ -208,8 +195,6 @@ def partidaId(id_partida: int):
     raise HTTPException(status_code=404, detail="Partida não encontrada")
 
 
-# Rota para buscar uma partida pelo nome dela.
-# O `nome_partida` é um **path parameter** que também vai na URL.
 @app.get("/partidas/nome/{nome_partida}")
 def partidaNome(nome_partida: str):
     for partida in partidas_db:
@@ -218,8 +203,6 @@ def partidaNome(nome_partida: str):
     raise HTTPException(status_code=404, detail="Partida não encontrada")
 
 
-# Rota para buscar partidas por categoria.
-# A `categoria_partida` é um **path parameter** que você coloca na URL.
 @app.get("/partidas/categoria/{categoria_partida}")
 def partidaCategoria(categoria_partida: Categoria):
     partidas_encontradas = [p for p in partidas_db if p.categoria_partida == categoria_partida]
@@ -228,8 +211,6 @@ def partidaCategoria(categoria_partida: Categoria):
     raise HTTPException(status_code=404, detail="Partida não encontrada")
 
 
-# Rota para deletar uma partida pelo ID.
-# O `id_partida` é um **path parameter** que você passa na URL.
 @app.delete("/partidas/{id_partida}")
 def excluirPartida(id_partida: int):
     for i, partida in enumerate(partidas_db):
@@ -239,8 +220,6 @@ def excluirPartida(id_partida: int):
     raise HTTPException(status_code=404, detail="Partida não encontrada.")
 
 
-# Essa rota cria um novo jogador.
-# Ela espera os dados do jogador (um JSON) no **body parameter**.
 @app.post("/jogadores")
 def criarJogador(novo_jogador: Jogador): 
     for jogador_existente in jogadores_db:
@@ -250,8 +229,6 @@ def criarJogador(novo_jogador: Jogador):
     return {"mensagem": "Jogador criado com sucesso!", "jogador_criado": novo_jogador}
 
 
-# Rota para encontrar um jogador pelo ID.
-# O `id_jogador` é um **path parameter** que vai na URL.
 @app.get("/jogadores/id/{id_jogador}")
 def jogadorId(id_jogador: int):
     for jogador in jogadores_db:
@@ -260,11 +237,10 @@ def jogadorId(id_jogador: int):
     raise HTTPException(status_code=404, detail="Jogador não encontrado")
     
 
-# Rota para encontrar um jogador pelo nome.
-# O `nome_jogador` é um **path parameter** que vai na URL.
 @app.get("/jogadores/nome/{nome_jogador}")
 def jogadorNome(nome_jogador: str):
     for jogador in jogadores_db:
         if jogador.nome_jogador == nome_jogador:
             return jogador
     raise HTTPException(status_code=404, detail="Jogador não encontrado")
+
